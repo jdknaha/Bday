@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🎂</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0d000d;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+}
+
+h1{
+  margin-top:100px;
+  font-size:60px;
+  color:#ff4d8d;
+}
+
+#count{
+  font-size:30px;
+  margin-top:20px;
+}
+
+button{
+  position:fixed;
+  top:20px;
+  right:20px;
+  font-size:20px;
+  padding:10px;
+  border:none;
+  border-radius:50%;
+  background:#ff4d8d;
+  color:white;
+  cursor:pointer;
+}
+
+/* heart */
+.heart{
+  position:fixed;
+  font-size:20px;
+  animation:float 2s linear forwards;
+}
+
+@keyframes float{
+  0%{transform:translateY(0); opacity:1;}
+  100%{transform:translateY(-300px); opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<button onclick="playMusic()">🎵</button>
+
+<h1>Happy Birthday ❤️</h1>
+<div id="count">Loading...</div>
+
+<script>
+/* COUNTDOWN */
+function update(){
+  let now=new Date();
+  let year = now.getMonth()>3 || (now.getMonth()==3 && now.getDate()>2)
+    ? now.getFullYear()+1
+    : now.getFullYear();
+
+  let target=new Date(year,3,2);
+  let diff=target-now;
+
+  if(diff<=0){
+    document.getElementById("count").innerHTML="🎉 It's Your Day!";
+    return;
+  }
+
+  let d=Math.floor(diff/86400000);
+  let h=Math.floor(diff%86400000/3600000);
+  let m=Math.floor(diff%3600000/60000);
+  let s=Math.floor(diff%60000/1000);
+
+  document.getElementById("count").innerHTML=
+    d+"d "+h+"h "+m+"m "+s+"s";
+}
+setInterval(update,1000);
+update();
+
+/* MUSIC */
+let ctx;
+function playMusic(){
+  if(!ctx){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    let o=ctx.createOscillator();
+    let g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=300;
+    o.start();
+    g.gain.setValueAtTime(0.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);
+    o.stop(ctx.currentTime+1);
+  }
+}
+
+/* HEART CLICK EFFECT */
+document.addEventListener("click",(e)=>{
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+
+  h.style.left=e.clientX+"px";
+  h.style.top=e.clientY+"px";
+
+  document.body.appendChild(h);
+
+  setTimeout(()=>h.remove(),2000);
+});
+</script>
+
+</body>
+</html>
